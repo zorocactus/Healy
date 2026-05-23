@@ -1,0 +1,61 @@
+# ══════════════════════════════════════════════════════════════
+# requirements-prod.txt — Healy Backend (sans bot IA)
+# Utilisé par Railway / Render. Pour activer le bot IA,
+# repasser sur requirements.txt + ENABLE_AI=True.
+# ══════════════════════════════════════════════════════════════
+
+# ── Django Core ───────────────────────────────────────────────
+Django==4.2.29
+asgiref==3.11.1
+sqlparse==0.5.5
+
+# ── Django REST Framework ─────────────────────────────────────
+djangorestframework==3.16.1
+djangorestframework_simplejwt==5.5.1
+drf-spectacular==0.29.0
+
+# ── Django Extensions ─────────────────────────────────────────
+django-cors-headers==4.9.0
+django-filter==25.1
+
+# ── Base de données ───────────────────────────────────────────
+psycopg2-binary==2.9.11
+dj-database-url==2.2.0
+
+# ── Serveur prod & statics ────────────────────────────────────
+gunicorn==23.0.0
+whitenoise==6.8.2
+
+# ── Auth & Sécurité ───────────────────────────────────────────
+PyJWT==2.12.1
+
+# ── Variables d'environnement ─────────────────────────────────
+python-dotenv==1.0.1
+
+# ── Fichiers & Media ──────────────────────────────────────────
+pillow==12.1.1
+python-magic==0.4.27
+openpyxl==3.1.5
+et_xmlfile==2.0.0
+
+# ── PDF & Rapports ────────────────────────────────────────────
+reportlab==4.4.10
+qrcode==8.2
+
+# ── Data ──────────────────────────────────────────────────────
+python-dateutil==2.9.0.post0
+six==1.17.0
+
+# ── API & Réseau ──────────────────────────────────────────────
+uritemplate==4.2.0
+charset-normalizer==3.4.6
+PyYAML==6.0.3
+inflection==0.5.1
+referencing==0.37.0
+jsonschema==4.26.0
+jsonschema-specifications==2025.9.1
+rpds-py==0.30.0
+attrs==26.1.0
+colorama==0.4.6
+tzdata==2025.3
+requests

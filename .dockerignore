@@ -1,0 +1,21 @@
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.env
+.env.local
+*.log
+
+# Bot IA — non déployé en prod (trop lourd)
+chroma_db/
+dataset/
+training/
+
+# Dev seulement
+media/
+staticfiles/
+db.sqlite3
+
+# Git
+.git/
+.gitignore

@@ -57,14 +57,18 @@ INSTALLED_APPS = [
     'messaging',
     'settings',
 
-    # ✅ Bot IA Diagnostic
-    'diagnostic_ai',
 ]
+
+# ✅ Bot IA Diagnostic — désactivé par défaut en prod (torch/chromadb trop lourds).
+# Pour réactiver : ENABLE_AI=True dans .env + installer requirements.txt (pas -prod).
+if os.environ.get('ENABLE_AI', 'False').lower() in ('true', '1', 'yes'):
+    INSTALLED_APPS.append('diagnostic_ai')
 
 # ── Middleware ────────────────────────────────────────────────────────────────
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -94,17 +98,28 @@ TEMPLATES = [
 WSGI_APPLICATION = 'backend.wsgi.application'
 
 # ── Database ──────────────────────────────────────────────────────────────────
-DATABASES = {
-    'default': {
-        'ENGINE':   'django.db.backends.postgresql',
-        'NAME':     os.environ.get('DB_NAME', 'medical_db'),
-        'USER':     os.environ.get('DB_USER', 'postgres'),
-        'PASSWORD': os.environ.get('DB_PASSWORD', ''),
-        'HOST':     os.environ.get('DB_HOST', 'localhost'),
-        'PORT':     os.environ.get('DB_PORT', '5432'),
-        'OPTIONS':  {'client_encoding': 'UTF8'},
-    },
-}
+# Priorité : DATABASE_URL (Railway/Render) → variables séparées (dev local).
+if os.environ.get('DATABASE_URL'):
+    import dj_database_url
+    DATABASES = {
+        'default': dj_database_url.parse(
+            os.environ['DATABASE_URL'],
+            conn_max_age=600,
+            ssl_require=not DEBUG,
+        )
+    }
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE':   'django.db.backends.postgresql',
+            'NAME':     os.environ.get('DB_NAME', 'medical_db'),
+            'USER':     os.environ.get('DB_USER', 'postgres'),
+            'PASSWORD': os.environ.get('DB_PASSWORD', ''),
+            'HOST':     os.environ.get('DB_HOST', 'localhost'),
+            'PORT':     os.environ.get('DB_PORT', '5432'),
+            'OPTIONS':  {'client_encoding': 'UTF8'},
+        },
+    }
 
 # ── Cache ─────────────────────────────────────────────────────────────────────
 # DatabaseCache requis pour le NIH validator du bot IA (partagé entre workers)
@@ -184,6 +199,9 @@ CORS_ALLOW_CREDENTIALS = True
 if not DEBUG and CORS_ALLOW_ALL_ORIGINS:
     raise RuntimeError("CORS_ALLOW_ALL=True interdit quand DEBUG=False — configurer CORS_ALLOWED_ORIGINS.")
 
+# CSRF — Django 4+ exige les origines HTTPS explicites pour POST cross-origin.
+CSRF_TRUSTED_ORIGINS = [o for o in CORS_ALLOWED_ORIGINS if o.startswith('https://')]
+
 # ── Security headers (prod) ──────────────────────────────────────────────────
 if not DEBUG:
     SECURE_SSL_REDIRECT = True
@@ -205,6 +223,8 @@ USE_TZ        = True
 
 # ── Static & Media ────────────────────────────────────────────────────────────
 STATIC_URL  = '/static/'
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 MEDIA_URL   = '/media/'
 MEDIA_ROOT  = BASE_DIR / 'media'
 

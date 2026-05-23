@@ -1,0 +1,3 @@
+# Force LF for shell scripts (Linux containers refusent CRLF dans le shebang).
+*.sh text eol=lf
+Procfile text eol=lf

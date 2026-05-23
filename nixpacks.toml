@@ -1,0 +1,10 @@
+# Nixpacks override — Railway utilise ce fichier pour builder l'image Python.
+# On force la lecture de requirements-prod.txt (et NON requirements.txt qui contient torch).
+[phases.setup]
+nixPkgs = ["python312", "postgresql"]
+
+[phases.install]
+cmds = ["python -m venv /opt/venv && . /opt/venv/bin/activate && pip install --upgrade pip && pip install -r requirements-prod.txt"]
+
+[start]
+cmd = "python manage.py migrate --noinput && python manage.py createcachetable && gunicorn backend.wsgi:application --bind 0.0.0.0:$PORT --workers 3 --timeout 120"
