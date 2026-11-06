@@ -18,6 +18,11 @@ django-filter==25.1
 
 # ── Base de données ───────────────────────────────────────────
 psycopg2-binary==2.9.11
+dj-database-url==2.2.0
+
+# ── Serveur prod & statics (utilisés aussi en dev pour matcher prod) ──
+gunicorn==23.0.0
+whitenoise==6.8.2
 
 # ── Auth & Sécurité ───────────────────────────────────────────
 PyJWT==2.12.1
@@ -27,8 +32,8 @@ python-dotenv==1.0.1
 
 # ── Fichiers & Media ──────────────────────────────────────────
 pillow==12.1.1
-python-magic==0.4.27
-python-magic-bin==0.4.14
+python-magic==0.4.27; platform_system != "Windows"
+python-magic-bin==0.4.14; platform_system == "Windows"
 openpyxl==3.1.5
 et_xmlfile==2.0.0
 
